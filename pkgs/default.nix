@@ -2224,6 +2224,7 @@ self: {
             optparse-applicative
             parsec
             QuickCheck
+            quickcheck-instances
             random
             reflection
             safecopy
