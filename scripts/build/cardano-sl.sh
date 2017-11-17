@@ -182,7 +182,6 @@ fi
 
 xperl='$|++; s/(.*) Compiling\s([^\s]+)\s+\(\s+([^\/]+).*/\1 \2/p'
 xgrep="((^.*warning.*$|^.*error.*$|^    .*$|^.*can't find source.*$|^Module imports form a cycle.*$|^  which imports.*$)|^)"
-xsed='1,11d' # the hack is necessary due to warning produced by servant-quickcheck
 
 if [[ $clean == true ]]; then
 
@@ -254,7 +253,7 @@ for prj in $to_build; do
   sbuild="stack build --ghc-options=\"$ghc_opts\" $commonargs $norun --dependencies-only $args $prj"
   echo -e "$sbuild\n"
   eval $sbuild 2>&1                         \
-    | sed -e "$xsed"
+    | tail -n +12 # the hack is necessary due to warning produced by servant-quickcheck
 
   if [[ $no_code == true ]]; then
     ghc_opts_2="$ghc_opts -fwrite-interface -fno-code"
@@ -266,7 +265,7 @@ for prj in $to_build; do
   echo -e "$sbuild\n"
 
   eval $sbuild 2>&1                         \
-    | sed -e "$xsed"                        \
+    | tail -n +12                           \
     | perl -pe "$xperl"                     \
     | { grep -E --color "$xgrep" || true; }
 done
@@ -275,7 +274,7 @@ if [[ $to_build == "" ]]; then
   sbuild="stack build --ghc-options=\"$ghc_opts\" $commonargs $norun $fast $args"
   echo -e "$sbuild\n"
   eval $sbuild 2>&1                         \
-    | sed -e "$xsed"                        \
+    | tail -n +12                           \
     | perl -pe "$xperl"                     \
     | { grep -E --color "$xgrep" || true; }
 fi
