@@ -253,7 +253,7 @@ for prj in $to_build; do
   sbuild="stack build --ghc-options=\"$ghc_opts\" $commonargs $norun --dependencies-only $args $prj"
   echo -e "$sbuild\n"
   eval $sbuild 2>&1                         \
-    | tail -n +12 # the hack is necessary due to warning produced by servant-quickcheck
+    | tail -f -n +12 # the hack is necessary due to warning produced by servant-quickcheck
 
   if [[ $no_code == true ]]; then
     ghc_opts_2="$ghc_opts -fwrite-interface -fno-code"
@@ -265,7 +265,7 @@ for prj in $to_build; do
   echo -e "$sbuild\n"
 
   eval $sbuild 2>&1                         \
-    | tail -n +12                           \
+    | tail -f -n +12                           \
     | perl -pe "$xperl"                     \
     | { grep -E --color "$xgrep" || true; }
 done
@@ -274,7 +274,7 @@ if [[ $to_build == "" ]]; then
   sbuild="stack build --ghc-options=\"$ghc_opts\" $commonargs $norun $fast $args"
   echo -e "$sbuild\n"
   eval $sbuild 2>&1                         \
-    | tail -n +12                           \
+    | tail -f -n +12                           \
     | perl -pe "$xperl"                     \
     | { grep -E --color "$xgrep" || true; }
 fi
